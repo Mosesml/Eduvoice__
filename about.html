@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link
+      href="https://fonts.googleapis.com/css?family=Beiruti"
+      rel="stylesheet"
+    />
+
+    <link
+      href="https://fonts.googleapis.com/css?family=Assistant"
+      rel="stylesheet"
+    />
+
+    <h1><title>About</title></h1>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, user-scalable=no"
+    />
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <noscript>
+      <link rel="stylesheet" href="assets/css/noscript.css" />
+    </noscript>
+    <style>
+      #header {
+        position: relative; /* Ensure the header is the positioning context */
+      }
+      p {
+        font-family: "Beiruti";
+        font-size: 30px;
+      }
+      h1 {
+        font-family: "Assistant";
+      }
+      #home-button {
+        position: absolute;
+        top: 50px; /* Adjust as needed */
+        right: 50px; /* Adjust as needed */
+        display: inline-block;
+      }
+
+      #home-button img {
+        width: 24px; /* Adjust size as needed */
+        height: auto; /* Maintain aspect ratio */
+      }
+    </style>
+  </head>
+  <body class="is-preload">
+    <!-- Header -->
+    <header id="header">
+      <a href="index.html" class="title">EduVoice</a>
+      <!-- Home Button -->
+      <a href="index.html" id="home-button">
+        <img src="images/home.png" alt="Home" />
+      </a>
+    </header>
+
+    <!-- Wrapper -->
+    <div id="wrapper">
+      <!-- Main -->
+      <section id="main" class="wrapper">
+        <div class="inner">
+          <h1 class="major">About Us</h1>
+          <p>
+            EduVoice is a groundbreaking project designed to revolutionize
+            education for deaf students by utilizing cutting-edge technology. By
+            integrating OLLAMA 3 for our chatbot and the WebkitSpeechRecognition
+            API for real-time speech-to-text transcription, we provide a
+            comprehensive solution to the communication barriers faced by these
+            students. Our software, developed using CSS, HTML, Python, Flask,
+            and JavaScript within the Visual Studio Code (VSCode) environment,
+            delivers accurate transcriptions and immediate support through a
+            user-friendly interface.
+          </p>
+          <p>
+            EduVoice was created to address the significant challenges that deaf
+            students encounter, such as the need to switch between interpreters
+            and note-taking, which increases cognitive load and fatigue. By
+            promoting greater independence and real-time engagement with
+            educational material, our tool aims to foster inclusivity and
+            improve learning outcomes. This website serves as the central hub
+            for information about EduVoice, offering insights into our project's
+            goals, technological framework, and ongoing developments in
+            enhancing educational accessibility.
+          </p>
+          <p>
+            Recently, we have created two new features, one being the pomodoro
+            timer, the other, a PDF to Notes creator. The Pomodoro timer,
+            created with HTML, CSS, and JS, allows the user to work in 25 minute
+            study intervals with 5 minute breaks. However, a difference between
+            the one on EduVoice and traditional pomodoro timers is that ours
+            sends a notification to the user's MAC or PC, allowing individuals
+            with' hearing problems to get visual aid.
+          </p>
+          <p>
+            Along with the Pomodoro timer, we have introduced the PDF to notes
+            feature. This Features frontend is developed through HTML CSS and JS
+            as well. The backend is connected through AJAX, It takes in the text
+            inputted through the PDF and runs it through an open source library
+            called PyMuPDF, a library made to extract text from PDFs. Then, it
+            uses the spaCy NLP library which is then sent to sumy, where it
+            summarizes the text and extracts key words.
+          </p>
+        </div>
+      </section>
+    </div>
+
+    <!-- Scripts -->
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/jquery.scrollex.min.js"></script>
+    <script src="assets/js/jquery.scrolly.min.js"></script>
+    <script src="assets/js/browser.min.js"></script>
+    <script src="assets/js/breakpoints.min.js"></script>
+    <script src="assets/js/util.js"></script>
+    <script src="assets/js/main.js"></script>
+  </body>
+</html>

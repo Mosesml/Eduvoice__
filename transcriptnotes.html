@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link
+      href="https://fonts.googleapis.com/css?family=Armata"
+      rel="stylesheet"
+    />
+    <title>EduVoice</title>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, user-scalable=no"
+    />
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <noscript
+      ><link rel="stylesheet" href="assets/css/noscript.css"
+    /></noscript>
+    <style>
+      h1 {
+        font-family: "Armata";
+        color: rgb(182, 183, 199);
+      }
+      .content {
+        padding: 20px;
+      }
+      .upload-container {
+        background: #04115a;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        padding: 40px;
+        display: inline-block;
+        width: 1430px;
+        height: 800px;
+        margin-top: 20px;
+        box-sizing: border-box;
+      }
+      input[type="file"] {
+        display: inline-block;
+        width: calc(100% - 120px);
+        margin: 10px 10px 10px 0;
+      }
+      button {
+        background-color: #135397;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        padding: 10px 20px; /* Adjusted padding */
+        cursor: pointer;
+        font-size: 16px; /* Adjust font size */
+        line-height: 1; /* Adjust line height */
+        margin-top: 10px;
+        height: 50px;
+      }
+      button:hover {
+        background-color: #0056b3;
+      }
+      .file-status {
+        display: inline-block;
+        color: #000; /* Black color for status text */
+        font-size: 16px; /* Adjust font size if needed */
+        margin-left: 10px; /* Space between file input and text */
+        vertical-align: middle; /* Align with the button */
+      }
+      textarea {
+        width: calc(100% - 24px); /* Adjust width to fit inside the container */
+        height: 600px; /* Increased height */
+        margin-top: 20px;
+        padding: 12px;
+        border: 1px solid #000000;
+        border-radius: 5px;
+        resize: none;
+        font-family: "Armata";
+        color: #333;
+        background-color: #d7d7da;
+        box-sizing: border-box;
+        font-size: 16px;
+      }
+    </style>
+  </head>
+  <body class="is-preload">
+    <header id="header">
+      <a href="index.html" class="title">EduVoice</a>
+      <nav>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="voicetext.html">Speech to Text</a></li>
+          <li><a href="chatbot.html">Chatbot</a></li>
+          <li>
+            <a href="transcriptnotes.html" class="active"
+              >Transcript To Notes</a
+            >
+          </li>
+          <li><a href="pomodoro.html">Pomodoro</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <div id="wrapper">
+      <section id="main" class="wrapper">
+        <div class="inner content">
+          <b><h1 class="major">Transcript To Notes</h1></b>
+          <span class="image fit">
+            <img src="images/transcriptnotes.png" alt="" />
+          </span>
+          <div class="upload-container">
+            <input type="file" accept="application/pdf" id="pdfFile" />
+            <textarea readonly id="extractedText"></textarea>
+            <button onclick="uploadPDF()">PDF to Text</button>
+            <button onclick="generateNotes()">Generate Notes</button>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <script>
+      function uploadPDF() {
+        const fileInput = document.getElementById("pdfFile");
+        const file = fileInput.files[0];
+
+        if (file) {
+          const formData = new FormData();
+          formData.append("file", file);
+
+          fetch("http://localhost:5005/upload", {
+            method: "POST",
+            body: formData,
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              const textarea = document.getElementById("extractedText");
+              textarea.value = data.text;
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+            });
+        } else {
+          alert("Please select a PDF file.");
+        }
+      }
+
+      function generateNotes() {
+        const extractedText = document.getElementById("extractedText").value;
+
+        fetch("http://localhost:5005/generate_notes", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ text: extractedText }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            const textarea = document.getElementById("extractedText");
+            textarea.value = data.notes;
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+          });
+      }
+    </script>
+
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/jquery.scrollex.min.js"></script>
+    <script src="assets/js/jquery.scrolly.min.js"></script>
+    <script src="assets/js/browser.min.js"></script>
+    <script src="assets/js/breakpoints.min.js"></script>
+    <script src="assets/js/util.js"></script>
+    <script src="assets/js/main.js"></script>
+  </body>
+</html>

@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>EduVoice</title>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, user-scalable=no"
+    />
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <noscript
+      ><link rel="stylesheet" href="assets/css/noscript.css"
+    /></noscript>
+    <style>
+      /* Add chatbot-specific styles */
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #182262;
+        margin: 0;
+        padding: 0;
+      }
+
+      #wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        padding: 20px;
+      }
+
+      .chat-container {
+        width: 90%;
+        max-width: 1500px;
+        height: 600px;
+        background-color: #e8e8e8;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .chat-header {
+        background-color: #173c64;
+        color: #fff;
+        padding: 15px;
+        text-align: center;
+      }
+
+      .chat-header h1 {
+        font-size: 1.2em;
+        margin: 0;
+      }
+
+      .chat-window {
+        flex: 1;
+        padding: 15px; /* Increase padding for more space around messages */
+        overflow-y: auto;
+        border-top: 1px solid #eee;
+        border-bottom: 1px solid #eee;
+      }
+
+      .message {
+        padding: 10px;
+        margin: 8px 0;
+        border-radius: 4px;
+        max-width: 85%;
+      }
+
+      .user-message {
+        background-color: #e0f7fa;
+        color: #000;
+        align-self: flex-end;
+      }
+
+      .bot-message {
+        background-color: #eee;
+        color: #333; /* Bot message text color */
+        align-self: flex-start;
+      }
+
+      .chat-input {
+        display: flex;
+        border-top: 1px solid #eee;
+        padding: 10px; /* Add padding around input and button */
+      }
+
+      .chat-input input {
+        flex: 1;
+        padding: 12px; /* Increase padding inside input */
+        border: none;
+        outline: none;
+        border-radius: 4px; /* Optional: Add border radius for input */
+        color: #000; /* Set text color inside the input field to black */
+        background-color: #fff; /* Ensure background is white for readability */
+      }
+
+      .chat-input button {
+        background-color: #1f456d;
+        color: #fff;
+        border: none;
+        padding: 8px 16px; /* Adjusted padding to fit text snugly */
+        cursor: pointer;
+        border-radius: 4px;
+        font-size: 16px;
+        line-height: 1;
+        margin-left: 10px;
+        height: 60px;
+      }
+
+      .chat-input button:hover {
+        background-color: #0056b3;
+      }
+    </style>
+  </head>
+  <body class="is-preload">
+    <!-- Header -->
+    <header id="header">
+      <a href="index.html" class="title">EduVoice</a>
+      <nav>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="voicetext.html">Speech to Text</a></li>
+          <li><a href="chatbot.html" class="active">Chatbot</a></li>
+          <li><a href="transcriptnotes.html">Transcript To Notes</a></li>
+          <li><a href="pomodoro.html">Pomodoro</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <!-- Wrapper -->
+    <div id="wrapper">
+      <!-- Chatbot Section -->
+      <div class="chat-container">
+        <div class="chat-header">
+          <h1>EduVoice AI</h1>
+        </div>
+        <div class="chat-window" id="chat-window">
+          <div class="message bot-message">
+            Welcome to EduVoice AI! Type 'exit' to quit.
+          </div>
+        </div>
+        <div class="chat-input">
+          <input
+            type="text"
+            id="user-input"
+            placeholder="Type a message..."
+            autofocus
+          />
+          <button onclick="sendMessage()">Send</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/jquery.scrollex.min.js"></script>
+    <script src="assets/js/jquery.scrolly.min.js"></script>
+    <script src="assets/js/browser.min.js"></script>
+    <script src="assets/js/breakpoints.min.js"></script>
+    <script src="assets/js/util.js"></script>
+    <script src="assets/js/main.js"></script>
+
+    <!-- Chatbot Script -->
+    <script>
+      document
+        .getElementById("user-input")
+        .addEventListener("keydown", function (event) {
+          if (event.key === "Enter") {
+            event.preventDefault(); // Prevent the default Enter key behavior (e.g., form submission)
+            sendMessage();
+          }
+        });
+
+      async function sendMessage() {
+        const userInput = document.getElementById("user-input").value;
+        if (!userInput.trim()) return;
+
+        // Display user message
+        displayMessage(userInput, "user-message");
+
+        // Send user message to the backend
+        try {
+          const response = await fetch("http://localhost:5001/chat", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ message: userInput }),
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            const botMessage = data.reply;
+
+            // Display bot message
+            displayMessage(botMessage, "bot-message");
+          } else {
+            console.error("Failed to fetch response from the server.");
+          }
+        } catch (error) {
+          console.error("Error:", error);
+        }
+
+        // Clear input
+        document.getElementById("user-input").value = "";
+      }
+
+      function displayMessage(message, className) {
+        const chatWindow = document.getElementById("chat-window");
+        const messageElement = document.createElement("div");
+        messageElement.className = `message ${className}`;
+        messageElement.textContent = message;
+        chatWindow.appendChild(messageElement);
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+      }
+    </script>
+  </body>
+</html>

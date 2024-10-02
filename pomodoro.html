@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link
+      href="https://fonts.googleapis.com/css?family=Beiruti"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Assistant"
+      rel="stylesheet"
+    />
+    <title>Pomodoro</title>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, user-scalable=no"
+    />
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <noscript>
+      <link rel="stylesheet" href="assets/css/noscript.css" />
+    </noscript>
+    <style>
+      body {
+        background-color: #1e213f;
+        color: #d7e0ff;
+      }
+      .upload-container {
+        background: #353a5b95;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        padding: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 1000px;
+        height: 600px;
+        margin: 20px auto;
+        box-sizing: border-box;
+      }
+      .container {
+        text-align: center;
+        width: 100%;
+      }
+      .timer {
+        display: inline-block;
+        padding: 10px;
+        width: 100%;
+        box-sizing: border-box;
+      }
+      h1 {
+        font-size: 2em;
+        width: 8ch;
+        margin: 20px auto;
+      }
+      .button-container {
+        margin-top: 20px;
+        display: flex;
+        justify-content: center;
+      }
+      .button {
+        background-color: #2e325a;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        padding: 10px 20px;
+        margin: 5px;
+        cursor: pointer;
+        height: 20px;
+      }
+      .button:hover {
+        background-color: #f87070;
+      }
+      .hidden {
+        display: block;
+      }
+      .timer-display {
+        font-size: 5em;
+        margin-top: 20px;
+        font-weight: bold;
+      }
+      #buttons {
+        margin-top: 20px;
+      }
+      #start,
+      #stop {
+        background-color: #2e325a;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        padding: 5px 20px; /* Reduced padding for smaller height */
+        margin: 10px;
+        cursor: pointer;
+      }
+      #stop:hover {
+        background-color: tomato;
+      }
+      #start:hover {
+        background-color: #219a52;
+      }
+      #timer-message {
+        color: white;
+        background-color: tomato;
+        display: none;
+        padding: 0.5em;
+        font-size: 1em;
+        text-align: center;
+        border-radius: 1em;
+      }
+    </style>
+  </head>
+  <body class="is-preload">
+    <!-- Header -->
+    <header id="header">
+      <a href="index.html" class="title">EduVoice</a>
+      <!-- Home Button -->
+      </a>
+      <nav>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="voicetext.html">Speech to Text</a></li>
+          <li><a href="chatbot.html">Chatbot</a></li>
+          <li><a href="transcriptnotes.html">Transcript To Notes</a></li>
+          <li><a href="pomodoro.html" class="active">Pomodoro</a></li>
+        </ul>
+      </nav>
+    </header>
+    <div class="upload-container">
+      <div class="container">
+        <div class="timer">
+          <h1>Pomodoro Timer</h1>
+          <div id="pomodoro-timer" class="timer-display" data-duration="25:00">
+            25:00
+          </div>
+          <div id="buttons">
+            <button id="start">START</button>
+            <button id="stop">STOP</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      let pomodoro = document.getElementById("pomodoro-timer");
+      let currentTimer = pomodoro;
+      let myInterval;
+      let breakInterval;
+
+      // Request notification permission on page load
+      document.addEventListener("DOMContentLoaded", function () {
+        if (Notification.permission !== "granted") {
+          Notification.requestPermission();
+        }
+      });
+
+      function startTimer(timerdisplay) {
+        clearInterval(myInterval);
+
+        let timerDuration = timerdisplay
+          .getAttribute("data-duration")
+          .split(":")[0];
+        let durationInMilliseconds = timerDuration * 60 * 1000;
+        let endTimestamp = Date.now() + durationInMilliseconds;
+
+        myInterval = setInterval(function () {
+          const timeRemaining = endTimestamp - Date.now();
+          if (timeRemaining <= 0) {
+            clearInterval(myInterval);
+            timerdisplay.textContent = "00:00";
+            sendNotification("Time's up!", "The Pomodoro session is complete.");
+            startBreak(timerdisplay); // Start break after Pomodoro session ends
+          } else {
+            const minutes = Math.floor(timeRemaining / 60000);
+            const seconds = ((timeRemaining % 60000) / 1000).toFixed(0);
+            const formattedTime = `${minutes}:${seconds
+              .toString()
+              .padStart(2, "0")}`;
+            timerdisplay.textContent = formattedTime;
+          }
+        }, 1000);
+      }
+
+      function startBreak(timerdisplay) {
+        let breakDuration = 5; // 5 minute break
+        let breakInMilliseconds = breakDuration * 60 * 1000;
+        let breakEndTimestamp = Date.now() + breakInMilliseconds;
+
+        breakInterval = setInterval(function () {
+          const breakTimeRemaining = breakEndTimestamp - Date.now();
+          if (breakTimeRemaining <= 0) {
+            clearInterval(breakInterval);
+            timerdisplay.textContent = "25:00"; // Reset to 25 minutes
+            timerdisplay.setAttribute("data-duration", "25:00");
+            sendNotification("Break's over!", "The break session is complete.");
+          } else {
+            const breakMinutes = Math.floor(breakTimeRemaining / 60000);
+            const breakSeconds = ((breakTimeRemaining % 60000) / 1000).toFixed(0);
+            const formattedBreakTime = `${breakMinutes}:${breakSeconds
+              .toString()
+              .padStart(2, "0")}`;
+            timerdisplay.textContent = formattedBreakTime;
+          }
+        }, 1000);
+      }
+
+      function sendNotification(title, body) {
+        if (Notification.permission === "granted") {
+          new Notification(title, { body });
+        }
+      }
+
+      document.getElementById("start").addEventListener("click", function () {
+        if (currentTimer) {
+          startTimer(currentTimer);
+          document.getElementById("timer-message").style.display = "none";
+        } else {
+          document.getElementById("timer-message").style.display = "block";
+        }
+      });
+
+      document.getElementById("stop").addEventListener("click", function () {
+        clearInterval(myInterval);
+        clearInterval(breakInterval);
+        pomodoro.textContent = "25:00"; // Reset to initial state
+      });
+    </script>
+    <!-- Scripts -->
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/jquery.scrollex.min.js"></script>
+    <script src="assets/js/jquery.scrolly.min.js"></script>
+    <script src="assets/js/browser.min.js"></script>
+    <script src="assets/js/breakpoints.min.js"></script>
+    <script src="assets/js/util.js"></script>
+    <script src="assets/js/main.js"></script>
+  </body>
+</html>
